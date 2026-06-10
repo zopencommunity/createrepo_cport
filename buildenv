@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: createrepo_c-version /CREATEREPO_C_VERSION="(.*)"/ https://github.com/rpm-software-management/createrepo_c.git|semver:*
-CREATEREPO_C_VERSION="1.2.1" # Specify a stable release
+CREATEREPO_C_VERSION="1.2.4" # Specify a stable release
 export ZOPEN_STABLE_TAG="${CREATEREPO_C_VERSION}"
 
 ###

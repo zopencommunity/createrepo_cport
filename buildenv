@@ -1,6 +1,6 @@
 # Update bump details accordingly. Use bump check to confirm.
 # bump: createrepo_c-version /CREATEREPO_C_VERSION="(.*)"/ https://github.com/rpm-software-management/createrepo_c.git|semver:*
-CREATEREPO_C_VERSION="1.2.1" # Specify a stable release
+CREATEREPO_C_VERSION="1.2.4" # Specify a stable release
 export ZOPEN_STABLE_TAG="${CREATEREPO_C_VERSION}"
 
 ###
@@ -16,7 +16,7 @@ export ZOPEN_BUILD_LINE="STABLE"
 
 ## Required IF ZOPEN_BUILD_LINE='STABLE'
 export ZOPEN_STABLE_URL="https://github.com/rpm-software-management/createrepo_c.git"  # Specify the stable build URL (either git or tarball)
-export ZOPEN_STABLE_DEPS="cmake make pkgconfig bzip2 glib curl libxml2 rpm popt openssl sqlite xz zlib zstd check bash-completion lua libgcrypt libgpgerror libassuan" # Specify the stable build dependencies.
+export ZOPEN_STABLE_DEPS="cmake make pkgconfig bzip2 glib curl libxml2 rpm popt openssl sqlite xz zlib zstd check bash-completion lua libgcrypt libgpgerror libassuan doxygen libpcre2" # Specify the stable build dependencies.
 
 ## Required IF ZOPEN_BUILD_LINE='DEV'
 export ZOPEN_DEV_URL=""   # Specify the dev build URL
@@ -158,7 +158,7 @@ export ZOPEN_CHECK_OPTS="-C ../build tests && make -C ../build test" ## Options 
 #export ZOPEN_CHECK_TIMEOUT="" ## Timeout limit in seconds for the check program (defaults to '12600' # 3.5 hours)
 #export ZOPEN_CLEAN_OPTS="" ## Options to pass to clean up  program (defaults to 'clean')
 #export ZOPEN_CONFIGURE_MINIMAL="" ## Configuration program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.
-export ZOPEN_CONFIGURE_OPTS="-B ../build --install-prefix \$ZOPEN_INSTALL_DIR/ -DCMAKE_INSTALL_PREFIX=\$ZOPEN_INSTALL_DIR/ -DCURL_LIBRARY=\"\$CURL_HOME/lib/libcurl.a\" -DCURL_INCLUDE_DIR=\"\$CURL_HOME/include\" -DBZIP2_INCLUDE_DIR=\$BZIP2_HOME/include -DBZIP2_LIBRARIES=\$BZIP2_HOME/lib/libbz2.a -DZLIB_LIBRARY=\"\$ZLIB_HOME/lib/libz.a\" -DWITH_LIBMODULEMD=OFF -DWITH_ZCHUNK=OFF -DENABLE_PYTHON=OFF -DBUILD_LIBCREATEREPO_C_SHARED=OFF" ## Options to pass to configuration program (defaults to '--prefix=')
+export ZOPEN_CONFIGURE_OPTS="-B ../build --install-prefix \$ZOPEN_INSTALL_DIR/ -DDEFAULT_COMPRESSION_METHOD=none -DCMAKE_INSTALL_PREFIX=\$ZOPEN_INSTALL_DIR/ -DCURL_LIBRARY=\"\$CURL_HOME/lib/libcurl.a\" -DCURL_INCLUDE_DIR=\"\$CURL_HOME/include\" -DBZIP2_INCLUDE_DIR=\$BZIP2_HOME/include -DBZIP2_LIBRARIES=\$BZIP2_HOME/lib/libbz2.a -DZLIB_LIBRARY=\"\$ZLIB_HOME/lib/libz.a\" -DWITH_LIBMODULEMD=OFF -DWITH_ZCHUNK=OFF -DENABLE_PYTHON=OFF -DBUILD_LIBCREATEREPO_C_SHARED=OFF" ## Options to pass to configuration program (defaults to '--prefix=')
 #export ZOPEN_EXTRA_CONFIGURE_OPTS="" ## Extra configure options to pass to configuration program. (defaults to '')
 export ZOPEN_INSTALL_OPTS="-C ../build install" ## Options to pass to installation program (defaults to 'install')
 #export ZOPEN_MAKE_MINIMAL="" ## Build program will not be passed CFLAGS, LDFLAGS, CPPFLAGS options but will get them from env vars.

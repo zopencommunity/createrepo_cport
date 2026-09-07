@@ -1,0 +1,67 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: sachintu47 <sachintu47@gmail.com>
+Date: Sat, 7 Sep 2024 06:26:00 -0400
+Subject: [PATCH] Add no-compression support to DEFAULT_COMPRESSION_METHOD
+
+Extend the configurable compression method to support no compression
+(CR_CW_NO_COMPRESSION) which is useful for z/OS environments where:
+- Fast I/O is preferred over disk space savings
+- CPU resources are limited
+- High-performance storage systems are in use
+- Easier debugging of repository XML files is desired
+
+Adds support for "none" and "no" as valid values for the
+DEFAULT_COMPRESSION_METHOD CMake option.
+
+Signed-off-by: sachintu47 <sachintu47@gmail.com>
+---
+ CMakeLists.txt            | 8 ++++++--
+ src/compression_wrapper.h | 6 +++++-
+ 2 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index de570b0..a0ea994 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -122,10 +122,12 @@ IF (ENABLE_THREADED_XZ_ENCODER)
+ ENDIF (ENABLE_THREADED_XZ_ENCODER)
+ 
+ # Default compression method
+-SET(DEFAULT_COMPRESSION_METHOD "zstd" CACHE STRING "Default compression method (zstd, gz, bz2, xz, zck)")
+-SET_PROPERTY(CACHE DEFAULT_COMPRESSION_METHOD PROPERTY STRINGS "zstd" "gz" "bz2" "xz" "zck")
++SET(DEFAULT_COMPRESSION_METHOD "zstd" CACHE STRING "Default compression method (none, zstd, gz, bz2, xz, zck)")
++SET_PROPERTY(CACHE DEFAULT_COMPRESSION_METHOD PROPERTY STRINGS "none" "zstd" "gz" "bz2" "xz" "zck")
+ STRING(TOLOWER "${DEFAULT_COMPRESSION_METHOD}" DEFAULT_COMPRESSION_METHOD_LOWER)
+-IF (DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "zstd")
++IF (DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "none" OR DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "no")
++    SET(CR_DEFAULT_COMPRESSION_VALUE "CR_CW_NO_COMPRESSION")
++ELSEIF (DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "zstd")
+     SET(CR_DEFAULT_COMPRESSION_VALUE "CR_CW_ZSTD_COMPRESSION")
+ ELSEIF (DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "gz")
+     SET(CR_DEFAULT_COMPRESSION_VALUE "CR_CW_GZ_COMPRESSION")
+@@ -140,7 +142,7 @@ ELSEIF (DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "zck")
+         MESSAGE(FATAL_ERROR "zck compression requires WITH_ZCHUNK to be enabled")
+     ENDIF (WITH_ZCHUNK)
+ ELSE (DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "zstd")
+-    MESSAGE(FATAL_ERROR "Invalid DEFAULT_COMPRESSION_METHOD: ${DEFAULT_COMPRESSION_METHOD}. Valid options are: zstd, gz, bz2, xz, zck")
++    MESSAGE(FATAL_ERROR "Invalid DEFAULT_COMPRESSION_METHOD: ${DEFAULT_COMPRESSION_METHOD}. Valid options are: none, zstd, gz, bz2, xz, zck")
+ ENDIF (DEFAULT_COMPRESSION_METHOD_LOWER STREQUAL "zstd")
+ ADD_DEFINITIONS("-DCR_DEFAULT_COMPRESSION=${CR_DEFAULT_COMPRESSION_VALUE}")
+ MESSAGE(STATUS "Default compression method: ${DEFAULT_COMPRESSION_METHOD} (${CR_DEFAULT_COMPRESSION_VALUE})")
+diff --git a/src/compression_wrapper.h b/src/compression_wrapper.h
+index 9c27c51..7253d30 100644
+--- a/src/compression_wrapper.h
++++ b/src/compression_wrapper.h
+@@ -46,7 +46,11 @@ typedef enum {
+     CR_CW_COMPRESSION_SENTINEL,       /*!< Sentinel of the list */
+ } cr_CompressionType;
+ 
+-/* Default compression method (configurable at build time) */
++/* Default compression method (configurable at build time)
++ * Valid options: CR_CW_NO_COMPRESSION, CR_CW_ZSTD_COMPRESSION,
++ *                CR_CW_GZ_COMPRESSION, CR_CW_BZ2_COMPRESSION,
++ *                CR_CW_XZ_COMPRESSION, CR_CW_ZCK_COMPRESSION
++ */
+ #ifndef CR_DEFAULT_COMPRESSION
+ #define CR_DEFAULT_COMPRESSION CR_CW_ZSTD_COMPRESSION
+ #endif

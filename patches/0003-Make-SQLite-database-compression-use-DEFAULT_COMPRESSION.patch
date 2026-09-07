@@ -1,0 +1,58 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: sachintu47 <sachintu47@gmail.com>
+Date: Sat, 7 Sep 2024 06:50:00 -0400
+Subject: [PATCH] Make SQLite database compression use DEFAULT_COMPRESSION
+
+Change SQLite database compression from hardcoded CR_CW_BZ2_COMPRESSION
+to use the configurable CR_DEFAULT_COMPRESSION macro, providing
+consistency with XML metadata compression.
+
+This allows SQLite databases (primary.sqlite, filelists.sqlite,
+other.sqlite) to respect the DEFAULT_COMPRESSION_METHOD CMake option,
+including the no-compression option added for z/OS.
+
+Benefits for z/OS:
+- Consistent compression behavior for all repository metadata
+- Faster repository generation when using no-compression
+- Lower CPU usage during repository creation
+- Flexibility to choose compression based on workload needs
+
+Note: dnf5 uses libsolv's solv_xfopen() which transparently handles
+decompression of .sqlite.bz2, .sqlite.gz, .sqlite.zst, and uncompressed
+.sqlite files based on file extension, so clients will work regardless
+of compression method chosen.
+
+Signed-off-by: sachintu47 <sachintu47@gmail.com>
+---
+ src/createrepo_c.c | 2 +-
+ src/mergerepo_c.h  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/createrepo_c.c b/src/createrepo_c.c
+index 197d78e..4bb1bbe 100644
+--- a/src/createrepo_c.c
++++ b/src/createrepo_c.c
+@@ -828,7 +828,7 @@ main(int argc, char **argv)
+     const char *sqlite_compression_suffix = NULL;
+     const char *compression_suffix = NULL;
+     cr_CompressionType xml_compression = CR_DEFAULT_COMPRESSION;
+-    cr_CompressionType sqlite_compression = CR_CW_BZ2_COMPRESSION;
++    cr_CompressionType sqlite_compression = CR_DEFAULT_COMPRESSION;
+     cr_CompressionType compression = CR_DEFAULT_COMPRESSION;
+ 
+     if (cmd_options->compatibility) {
+diff --git a/src/mergerepo_c.h b/src/mergerepo_c.h
+index 96fc147..763e076 100644
+--- a/src/mergerepo_c.h
++++ b/src/mergerepo_c.h
+@@ -27,7 +27,7 @@ extern "C" {
+ 
+ #include "compression_wrapper.h"
+ 
+-#define DEFAULT_DB_COMPRESSION_TYPE             CR_CW_BZ2_COMPRESSION
++#define DEFAULT_DB_COMPRESSION_TYPE             CR_DEFAULT_COMPRESSION
+ #define DEFAULT_COMPRESSION_TYPE                CR_DEFAULT_COMPRESSION
+ 
+ typedef enum {
+-- 
+2.55.0

@@ -16,7 +16,7 @@ export ZOPEN_BUILD_LINE="STABLE"
 
 ## Required IF ZOPEN_BUILD_LINE='STABLE'
 export ZOPEN_STABLE_URL="https://github.com/rpm-software-management/createrepo_c.git"  # Specify the stable build URL (either git or tarball)
-export ZOPEN_STABLE_DEPS="cmake make pkgconfig bzip2 glib curl libxml2 rpm popt openssl sqlite xz zlib zstd check bash-completion lua libgcrypt libgpgerror libassuan" # Specify the stable build dependencies.
+export ZOPEN_STABLE_DEPS="cmake make pkgconfig bzip2 glib curl libxml2 rpm popt openssl sqlite xz zlib zstd check bash-completion lua libgcrypt libgpgerror libassuan doxygen" # Specify the stable build dependencies.
 
 ## Required IF ZOPEN_BUILD_LINE='DEV'
 export ZOPEN_DEV_URL=""   # Specify the dev build URL
